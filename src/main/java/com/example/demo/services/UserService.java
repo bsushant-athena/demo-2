@@ -3,6 +3,7 @@ package com.example.demo.services;
 import com.example.demo.entity.User;
 import com.example.demo.repositories.UserRepository;
 import com.querydsl.core.types.Predicate;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,12 @@ public class UserService {
     }
 
     public Iterable< User > findAll ( Predicate predicate ) {
+
         return userRepository.findAll ( predicate );
     }
 
     public User getUser ( long id ) {
-        return userRepository.findById ( id ).get ();
+        Optional<User> user = userRepository.findById ( id );
+        return user.isPresent () ? user.get() : null;
     }
 }
