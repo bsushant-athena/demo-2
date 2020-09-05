@@ -1,0 +1,1 @@
+This is a dummy project for showing usage of sqlite using java jpa.
