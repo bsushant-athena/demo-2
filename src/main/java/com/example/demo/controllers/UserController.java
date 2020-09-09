@@ -2,13 +2,10 @@ package com.example.demo.controllers;
 
 import com.example.demo.entity.User;
 import com.example.demo.services.UserService;
-import com.querydsl.core.types.Predicate;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,18 +31,15 @@ public class UserController {
     }
 
     @GetMapping
-    public Page< ? > findAllUsers(Pageable pageable) {
-        return userService.findAll(pageable);
+    public ResponseEntity < List < User > > findAllUsers() {
+        List<User> users = new ArrayList<>();
+        Iterable<User> userIterable = userService.findAll();
+        Iterator<User> userIterator = userIterable.iterator ();
+        while(userIterator.hasNext ()){
+            users.add ( userIterator.next () );
+        }
+        return users.isEmpty () ? new ResponseEntity < List < User> >(users, HttpStatus.NO_CONTENT)
+                : new ResponseEntity < List < User> >(users, HttpStatus.OK);
     }
 
-    @GetMapping("/sortedusers")
-    public Page< ? > findAllUsersSortedByName() {
-        Pageable pageable = PageRequest.of(0, 5, Sort.by("name"));
-        return userService.findAll(pageable);
-    }
-
-    @GetMapping("/filteredusers")
-    public Iterable< ? > getUsersByQuerydslPredicate(@QuerydslPredicate (root = User.class) Predicate predicate) {
-        return userService.findAll(predicate);
-    }
 }
